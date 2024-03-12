@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>Avaliação Continuada 01</title>
+
+        <!-- MATHJAX 3 (através da CDN) -->
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script
+            id="MathJax-script"
+            async
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+        ></script>
+
+        <!-- MATHJAX 3 (salvo no computador) -->
+        <!-- <script type="text/javascript" async src="../../../Aplicativos/MathJax-master/es5/tex-mml-chtml.js" async></script> -->
+    </head>
+    <body>
+        <h1>Avaliação Continuada 01</h1>
+
+        <h3>
+            Aluno: Francisco Djalma Pereira da Silva Júnior<br />
+            Matrícula: 554222
+        </h3>
+
+        <p>
+            <strong>Questão 1:</strong>
+            Escreva pseudocódigos para os procedimentos
+            <strong
+                >minHeap-decreaseKey(A,i,newKey), minFixDown(A, i),
+                minMoveUp(A,i), minHeap-increaseKey(A,i,newKey),
+                minHeapInsert(A,key) e extractMinimum(A)</strong
+            >, que implementem uma fila de prioridade
+            <strong>mínima</strong> com um heap de mínimo.
+            <strong>Obs.:</strong> Note que todos esses procedimentos são
+            versões similares às vistas em sala, só que aqui estou pedindo para
+            uma fila de prioridades mínima. Estou pedindo pseudocódigo, não
+            escreva implementações em linguagem de programação específica.
+        </p>
+
+        <pre>
+            <code>
+minHeap-decreaseKey(A, i, newKey):
+    if newKey > A[i]:
+        throw "new key is greater than current key"
+    A[i] = newKey
+    minMoveUp(A, i)
+
+minFixDown(A, i):
+    l = 2 * i
+    r = 2 * i + 1
+    smallest = i
+    if l <= heapSize && A[l] < A[i]:
+        smallest = l
+    if r <= heapSize && A[r] < A[smallest]:
+        smallest = r
+    if smallest != i:
+        swap(A[i], A[smallest])
+        minFixDown(A, smallest)
+
+minMoveUp(A, i):
+    while i > 1 && A[i / 2] > A[i]:
+        swap(A[i], A[i / 2])
+        i = i / 2
+
+minHeap-increaseKey(A, i, newKey):
+    if newKey < A[i]:
+        throw "new key is smaller than current key"
+    A[i] = newKey
+    minFixDown(A, i)
+
+minHeapInsert(A, key):
+    heapSize = heapSize + 1
+    A[heapSize] = key
+    minMoveUp(A, heapSize)
+
+extractMinimum(A):
+    if heapSize < 1:
+        throw "heap underflow"
+    min = A[1]
+    A[1] = A[heapSize]
+    heapSize = heapSize - 1
+    minFixDown(A, 1)
+    return min
+            </code>
+        </pre>
+
+        <p>
+            <strong>Questão 2:</strong> Seja \(A\) um heap de máximo. A operação
+            <strong>HEAP-DELETE(A, i)</strong> elimina o item no nó \(i\) do
+            heap \(A\). Dê uma implementação correta de
+            <strong>HEAP-DELETE(A,i)</strong>
+            que seja executada no tempo \(O(\lg n)\) para um heap de máximo de
+            \(n\) elementos.
+        </p>
+        <pre>
+            <code>
+HEAP-DELETE(A, i):
+    if i < 1 or i > heapSize:
+        throw "Invalid index i"
+
+    A[i] = A[heapSize]
+    heapSize = heapSize - 1
+    maxFixDown(A, i)
+            </code>
+        </pre>
+
+        <p>
+            <strong>Questão 3:</strong> Um heap \(d\)-ário é semelhante a um heap binário, 
+            mas (com uma única exceção possível) nós que não são folhas têm \(d\) filhos em vez de dois filhos.
+            <ol type="a">
+              <li>
+                Como você representaria um heap \(d\)-ário de máximo em um vetor? Justifique.
+              </li>
+              <p>
+                Para representar um heap d-ário de máximo em um vetor, podemos usar
+                uma estrutura de heap completa. Isso significa que preenchemos o
+                vetor de cima para baixo e da esquerda para a direita com os
+                elementos do heap. A relação entre os índices do vetor e os
+                filhos/pais no heap é um pouco diferente de um heap binário, mas
+                segue um padrão definido. Se d é o fator de ramificação (o número de
+                filhos de cada nó), então para um nó i, seus filhos estarão em
+                índices \(d*i + 1, d*i + 2, ..., d*i + d\), e seu pai estará no
+                índice \((i-1)/d\), considerando que os índices do vetor começam de
+                0. Isso significa que podemos acessar os filhos e o pai de qualquer
+                nó diretamente com essas fórmulas.
+            </p>
+              <li>
+                Qual é a altura de um heap \(d\)-ário de \(n\) elementos em termos de \(n\) e \(d\)? Justifique.
+              </li>
+              <p>
+                A altura de um heap d-ário com n elementos depende do número de
+                elementos e do fator de ramificação \(d\). A altura h do heap d-ário
+                é determinada pelo número máximo de comparações entre elementos que
+                devem ser feitas para alcançar uma folha a partir da raiz. Em um
+                heap d-ário, a altura \(h\) é aproximadamente \(log_d(n)\), onde
+                \(log_d(n)\) é o logaritmo de base \(d\) de \(n\). Isso ocorre
+                porque a altura de uma árvore é o número de níveis na árvore, e cada
+                nível reduz o número de elementos em um fator de \(d\).
+            </p>
+              <li>
+                Dê uma implementação eficiente de EXTRACT-MAXIMUM() em um heap de máximo \(d\)-ário. 
+                Analise seu tempo de execução em termos de \(d\) e \(n\).
+              </li>
+              <p>
+                Para implementar EXTRACT-MAXIMUM() em um heap de máximo d-ário,
+                podemos seguir um procedimento semelhante ao de um heap binário.
+                Primeiro, trocamos o máximo (que está na raiz) com o último elemento
+                do heap. Em seguida, reduzimos o tamanho do heap e reequilibramos o
+                heap (chamado de maxFixDown) para manter a propriedade de heap
+                máximo. A complexidade de tempo para esta operação seria
+                proporcional à altura do heap, que é log_d(n), onde n é o número de
+                elementos e d é o fator de ramificação.
+            </p>
+            </ol>
+          </p>
+       
+
+          <p>
+            <strong>Questão 4:</strong> Um algoritmo de ordenação é <strong>estável</strong> 
+            quando números com o mesmo valor aparecem no arranjo de saída na mesma ordem em 
+            que se encontram no arranjo de entrada. Essa propriedade é importante quando os 
+            dados satélites que acompanham os elementos sendo ordenados devem ser transportados 
+            juntamente com o elemento. <strong>Mostre que o HeapSort não é estável</strong>.
+          </p>
+        <p>
+            A instabilidade do HeapSort ocorre durante a etapa de remoção da
+            raiz. Quando dois ou mais elementos no heap têm o mesmo valor, o
+            algoritmo não garante que o elemento que foi inserido primeiro será
+            removido primeiro. Na verdade, o elemento que foi inserido por
+            último será <strong>sempre</strong> removido primeiro.
+            <br />
+            Para demonstrar isso, tomaremos de exemplo o seguinte array: $$arr =
+            [(3,A), (2,B), (1,C), (2,D), (5,E)]$$ Após a construção do heap,
+            teremos: $$arr = [(5,E), (3,A), (1,C), (2,D), (2,B)]$$ Após a
+            remoção da raiz, teremos: $$arr = [(3,A), (2,B), (1,C), (2,D)]$$ Na
+            próxima remoção, teremos: $$arr = [(2,B), (2,D), (1,C)]$$Logo após:
+            $$arr = [(2,D), (1,C)]$$ E por fim: $$arr = [(1,C)]$$ Note que o
+            segundo 2 foi removido antes do primeiro 2, o que demonstra a
+            instabilidade do HeapSort.
+        </p>
+    </body>
+</html>
